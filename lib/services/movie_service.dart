@@ -55,6 +55,6 @@ class DBService {
 
   Future<int> updateMovie(Movie movie) async {
     final db = await database;
-    return db.update('movies', movie.toMap(), where: 'id = ?', whereArgs: [movie.id]);
+    return await db.update('movies', movie.toMap(), where: 'id = ?', whereArgs: [movie.id]);
   }
 }

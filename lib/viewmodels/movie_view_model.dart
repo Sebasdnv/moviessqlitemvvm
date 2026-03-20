@@ -14,10 +14,15 @@ class MovieViewModel extends ChangeNotifier {
   Future<void> fetchMovies() async {
     _isLoading = true;
     notifyListeners();
-    _movies = await _dbService.getAllMovies();
-    _filteredMovies = List.from(_movies);
-    _isLoading = false;
-    notifyListeners();
+    try {
+      _movies = await _dbService.getAllMovies();
+      _filteredMovies = List.from(_movies);
+    } catch (e) {
+      print("Errore nel fetch: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   //* metodo per aggiungere un film
