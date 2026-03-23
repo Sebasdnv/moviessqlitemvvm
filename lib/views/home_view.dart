@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviessqlitemvvm/models/movie.dart';
 import 'package:moviessqlitemvvm/viewmodels/movie_view_model.dart';
+import 'package:moviessqlitemvvm/views/components/movie_form_dialog.dart';
 import 'package:provider/provider.dart';
 
 class HomeView extends StatelessWidget {
@@ -32,10 +33,18 @@ class HomeView extends StatelessWidget {
               ),
             );
           }
-
           return const Text("verra sostituito dalla lista dei film");
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          showDialog(
+            context: context,
+            builder: (_) => MovieFormDialog()
+            );
+        },
+        child:  const Icon(Icons.add),
+        ),
     );
   }
 }
