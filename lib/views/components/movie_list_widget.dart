@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moviessqlitemvvm/viewmodels/movie_view_model.dart';
+import 'package:moviessqlitemvvm/views/components/movie_form_dialog.dart';
 import 'package:provider/provider.dart';
 
 class MovieListWidget extends StatefulWidget {
@@ -26,6 +27,25 @@ class _MovieListWidgetState extends State<MovieListWidget> {
               child: ListTile(
                 title: Text(movie.title),
                 subtitle: Text("Anno: ${movie.year} - Durata: ${movie.duration} \n Trama: ${movie.plot}"),
+                trailing: Wrap(
+                  spacing: 8,
+                  children: [
+                    IconButton(
+                      onPressed: (){
+                        showDialog(
+                          context: context,
+                          builder:(_) => MovieFormDialog(movie: movie) 
+                        );
+                      },
+                      icon: Icon(Icons.edit, color: Colors.blue,)),
+
+                    IconButton(
+                      onPressed: (){
+                        context.read<MovieViewModel>().deleteMovie(movie.id!);
+                      },
+                      icon: const Icon(Icons.delete, color: Colors.red))
+                  ],
+                ),
               ),
             );
           }))
