@@ -12,7 +12,6 @@ class MovieFormDialog extends StatefulWidget {
 }
 
 class _MovieFormDialogState extends State<MovieFormDialog> {
-
   final _formKey = GlobalKey<FormState>();
 
   late TextEditingController _titleController;
@@ -21,44 +20,101 @@ class _MovieFormDialogState extends State<MovieFormDialog> {
   late TextEditingController _yearController;
 
   @override
-  void initStatte(){
+  void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.movie?.title ?? "");
     _plotController = TextEditingController(text: widget.movie?.plot ?? "");
-    _durationController = TextEditingController(text: widget.movie?.duration.toString() ?? "");
-    _yearController = TextEditingController(text: widget.movie?.year.toString() ?? "");
-  }
-
-@override
-void dispose(){
-  _titleController.dispose();
-  _plotController.dispose();
-  _durationController.dispose();
-  _yearController.dispose();
-  super.dispose();
-}
-
-void _submitForm(){
-  if (_formKey.currentState!.validate()) {
-    final newMovie = Movie(
-      title: _titleController.text,
-      duration: int.parse(_durationController.text),
-      plot: _plotController.text,
-      year: int.parse(_yearController.text)
+    _durationController = TextEditingController(
+      text: widget.movie?.duration.toString() ?? "",
     );
-
-    final vm = context.read<MovieViewModel>();
-    if (widget.movie==null) {
-      vm.addMovie(newMovie);
-    } else {
-      vm.updateMovie(newMovie);
-    }
-    Navigator.of(context).pop();
+    _yearController = TextEditingController(
+      text: widget.movie?.year.toString() ?? "",
+    );
   }
-}
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _plotController.dispose();
+    _durationController.dispose();
+    _yearController.dispose();
+    super.dispose();
+  }
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      final newMovie = Movie(
+        title: _titleController.text,
+        duration: int.parse(_durationController.text),
+        plot: _plotController.text,
+        year: int.parse(_yearController.text),
+      );
+
+      final vm = context.read<MovieViewModel>();
+      if (widget.movie == null) {
+        vm.addMovie(newMovie);
+      } else {
+        vm.updateMovie(newMovie);
+      }
+      Navigator.of(context).pop();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return AlertDialog(
+      title: Text(widget.movie == null ? "Aggiungi film" : "Modifica film"),
+      content: SingleChildScrollView(
+        key: _formKey,
+        child: Form(
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _titleController,
+                decoration: const InputDecoration(labelText: "Titolo"),
+                validator: (value) => value == null || value.isEmpty
+                    ? "Campo obbligatorio"
+                    : null,
+              ),
+
+              TextFormField(
+                controller: _durationController,
+                decoration: const InputDecoration(
+                  labelText: "Durata in minuti",
+                ),
+                keyboardType: TextInputType.number,
+                validator: (value) =>
+                    value == null || int.tryParse(value) == null
+                    ? "Inserisci un numero"
+                    : null,
+              ),
+
+              TextFormField(
+                controller: _plotController,
+                decoration: const InputDecoration(labelText: "Trama"),
+                validator: (value) => value == null || value.isEmpty
+                    ? "Trama obbligatoria"
+                    : null,
+              ),
+
+              TextFormField(
+                controller: _yearController,
+                decoration: const InputDecoration(labelText: "Anno di uscita"),
+                keyboardType: TextInputType.number,
+                validator: (value) =>
+                    value == null || int.tryParse(value) == null
+                    ? "Inserisce un anno valido"
+                    : null,
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: ()=> Navigator.of(context).pop(),
+        child: const Text("Annulla")),
+        ElevatedButton(onPressed: _submitForm, child: const Text("Salva"))
+      ],
+    );
   }
 }
